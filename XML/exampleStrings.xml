@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://xml.xeophin.net/localizableStrings/2.0/schema.rng" type="xml"?>
+
+<!-- This is a commented example string file. -->
+<localizableStrings>
+    <meta> <!-- Contains meta information about the game -->
+        <gameName>ExampleGame</gameName>
+        
+        <!-- A list of languages that can be found in this document. -->
+        <enabledLanguages>
+            <language id="de" fullName="Deutsch" default="true" />
+            <language id="en" fullName="English" />
+            <language id="fr" fullName="Français"/>
+        </enabledLanguages>
+        
+        <!-- The author of the file. -->
+        <author>Kaspar Manz</author>
+        
+        <!-- A version history of changes made to the document. -->
+        <versionhistory>
+            <changelog author="Kaspar Manz" date="2011-03-14" version="1.0">
+                Added the first examples.
+            </changelog>
+        </versionhistory>
+        
+    </meta>
+    
+    <!-- Thusly, the strings begin. -->
+    <string id="uniqueID">
+        <!-- Simple strings are tagged with "text". -->
+        <text lang="de">Der Text in deutsch.</text>
+        <text lang="en">The text in English.</text>
+        <text lang="fr">Le texte en français.</text>
+        
+        <!-- You can also add references to audio files. -->
+        <audio lang="de">audio/de/uniqueID</audio>
+        
+        <!-- Or images. (Though the Translator class does not yet implement that. -->
+        <image lang="de">images/de/uniqueID</image>
+    </string>
+    
+    <!-- Now add more strings! -->
+    <string id="yetAnotherUniqueID">
+        <text lang="de">Beenden</text>
+        <text lang="en">Quit</text>
+        <text lang="fr">Quitter</text>
+    </string>
+    
+</localizableStrings>

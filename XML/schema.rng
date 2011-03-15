@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!-- Version 2.0 -->
+  <!-- This version now enables the use of branching dialogue. It's a bit complicated now. -->
+  <start>
+    <element name="localizableStrings">
+      <element name="meta">
+        <interleave>
+
+        <element name="gameName">
+          <text/>
+        </element>
+          
+          <optional>
+            <element name="characterName">
+              <text />
+            </element>
+            <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+              Use to make a note of the character name this conversation file belongs to.
+            </documentation>
+          </optional>
+        
+          <optional>
+<element name="versionhistory">
+  <zeroOrMore>
+        <element name="changelog">
+          <optional>
+            <attribute name="version">
+              <data type="token"/>
+            </attribute>
+            <attribute name="date">
+              <data type="date"></data>
+            </attribute>
+            <attribute name="author">
+              <data type="token"></data>
+            </attribute>
+          </optional>
+        <optional><text /></optional>
+        </element>
+  </zeroOrMore>
+</element>
+        </optional>
+        
+        <optional>
+          <element name="author">
+            <text/>
+          </element>
+        </optional>
+        
+         <element name="enabledLanguages">
+            <oneOrMore>
+              <element name="language">
+                <attribute name="fullName">
+                  <data type="token" />
+                </attribute>
+                <attribute name="id">
+                  <data type="language" />
+                </attribute>
+                <optional>
+                <attribute name="default">
+                  <data type="boolean" />
+                </attribute>
+                </optional>
+              </element>
+            </oneOrMore>
+          </element>
+        </interleave>
+      </element>
+      <oneOrMore>
+          <ref name="string"></ref>
+      </oneOrMore>
+
+    </element>
+  </start>
+  
+  <define name="string">
+    <element name="string">
+      <attribute name="id">
+        <data type="ID"/>
+      </attribute>
+      
+      <optional>
+        <ref name="condition"></ref>
+      </optional>
+      
+      <oneOrMore>
+        <choice>
+          <element name="text">
+            <ref name="language" />
+            <text/>
+          </element>
+          
+          <element name="audio">
+<ref name="language" />
+            <text/>
+          </element>
+          
+          <element name="image">
+<ref name="language"/>
+            <text/>
+          </element>
+        
+        </choice>
+      </oneOrMore>
+      
+
+        <ref name="goto" />
+
+      
+      
+      <zeroOrMore>
+        <element name="option">
+          
+          <ref name="attributes" />
+          
+          <ref name="condition" />
+          
+          <choice>
+            <ref name="reference" />
+            <ref name="string" />
+          </choice>
+          
+          <zeroOrMore>
+          <element name="linktext">
+            <data type="token" />
+            <ref name="language"></ref>
+          </element>
+            <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+              The link text that is shown to the user – if not the same as the string text.
+            </documentation>
+          </zeroOrMore>
+          
+
+          <ref name="action"></ref>
+          <ref name="goto" />
+          
+
+        </element>
+        <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+          The Option defines several options that can be chosen by the player. These options are
+          entirely optional and don't have to be included.
+        </documentation>
+      </zeroOrMore>
+      
+    </element>
+    <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+      The String element is the main data holder of the LocalizableStrings scheme. It contains a string referenced
+      by an ID that can be retrieved by the game.
+    </documentation>
+  </define>
+  
+  <define name="condition">
+    <zeroOrMore>
+    <element name="if">
+      <attribute name="property">
+        <data type="token"/>
+      </attribute>
+      <attribute name="of">
+        <choice>
+          <value>Player</value>
+          <value>Agent</value>
+        </choice>
+      </attribute>
+      <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+        Defines the target object (Player or Agent).
+      </documentation>
+      <attribute name="is">
+        <choice>
+          <value>Equal</value>
+          <value>LowerThan</value>
+          <value>BiggerThan</value>
+          <value>LowerThanOrEqual</value>
+          <value>BiggerThanOrEqual</value>
+        </choice>
+      </attribute>
+      <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+        Defines the Operator.
+      </documentation>
+      <attribute name="value">
+        <data type="token"/>
+      </attribute>
+      <ref name="attributes" />
+    </element>
+      <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+        The condition defines a condition that needs to be checked before the
+        string is actually shown. Read as "The property of player is equal the value"
+      </documentation>
+    </zeroOrMore>
+  </define>
+  
+  <define name="action">
+    <zeroOrMore>
+      <element name="do">
+        <ref name="attributes" />
+                <attribute name="action">
+          <data type="token" />
+                </attribute>
+        <optional>
+          <attribute name="value">
+          <data type="token" />
+          </attribute>
+        </optional>
+<optional>        
+  <attribute name="property">
+          <data type="token" />
+  </attribute>
+</optional>
+        <attribute name="to">
+          <choice>
+            <value>Player</value>
+            <value>Agent</value>
+          </choice>
+        </attribute>
+        
+
+        
+
+      </element>
+      <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+        The do tag tells the parser to perform an action.
+      </documentation>
+    </zeroOrMore>
+  </define>
+  
+  <define name="reference">
+    <element name="look">
+      <attribute name="here">
+        <data type="IDREF" />
+      </attribute>
+    </element>
+    <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+      This tag works as an alias – instead of writing the same options over and over, this tag
+      can be used to refer an already existing string.
+    </documentation>
+  </define>
+  
+  <define name="language">
+    <optional>
+      <attribute name="lang">
+        <data type="language"/>
+      </attribute>
+    </optional>
+  </define>
+  
+  <define name="goto">
+    <optional>
+      <element name="go">
+      <attribute name="to">
+        <data type="IDREF" />
+      </attribute>
+        <empty/>
+      </element>
+      <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">The Goto Tag tells 
+        the parser to go to the next ID. It is also
+        used when the condition fails to evaluate. It can be used to link to the alternative string.
+      </documentation>
+    </optional>
+  </define>
+  
+  <define name="attributes">
+    <optional>
+    <attribute name="attributes">
+      <list><oneOrMore>
+        <data type="token" />
+      </oneOrMore>              
+      </list>
+    </attribute>
+    <documentation xmlns="http://relaxng.org/ns/compatibility/annotations/1.0">
+      Attributes are more free-form, than other attributes – they are here to make the format extensible to a degree.
+    </documentation>
+    </optional>
+  </define>
+  
+</grammar>
