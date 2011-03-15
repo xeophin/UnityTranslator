@@ -83,8 +83,12 @@ public class Translator : MonoBehaviour
 		// Get all available languages.
 		foreach (XPathNavigator a in nav.Select ("localizableStrings/meta/enabledLanguages/language")) {
 			availableLanguages.Add (a.SelectSingleNode ("@id").Value, a.SelectSingleNode ("@fullName").Value);
-			if (a.SelectSingleNode ("@default").ValueAsBoolean == true) {
-				baselanguage = a.SelectSingleNode("@id").Value;
+			try {
+				if (a.SelectSingleNode ("@default").ValueAsBoolean == true) {
+					baselanguage = a.SelectSingleNode ("@id").Value;
+				}
+			} catch (NullReferenceException) {
+				// skip – this just means that the default attribute has not been set. This is not an error.
 			}
 		}
 		
