@@ -17,6 +17,10 @@ using System.Collections.Generic;
 /// A file reader that extracts localizable data out of an XML file and
 /// provides an interface for both audio player functions as well as
 /// any other class that displays localizable GUI strings.
+///
+/// This class is now a Singleton and does not have to be attached to
+/// an existing GameObject. Call it from a <c>GameMaster</c> or
+/// <see cref="TranslatorClient"/> object.
 /// </summary>
 /// <remarks>
 /// Usually, I use this class together with two other classes: The
@@ -46,19 +50,45 @@ using System.Collections.Generic;
 /// \warning A later version of this class might take the GetText and GetAudio methods apart,
 /// in order to keep performance.
 /// </remarks>
-/// \version 2.0
+/// \version 2.1
 /// \author Kaspar Manz
-public class Translator : MonoBehaviour
-{
+public class Translator {
+
+	#region Singleton stuff
+
+	private static Translator instance;
 
 	/// <summary>
-	/// The path to the XML file containing the localized strings.
+	/// The actual instance of the Translator. Provides access to all functions.
 	/// </summary>
-	/// <remarks>
-	/// The path within Unity is relativ to the project folder and not
-	/// to the Assets directory (i.e. "Assets/localized.xml").
-	/// </remarks>
-	public TextAsset stringFile;
+	/// \warning When called directly without an existing instance, this script
+	/// will assume that there is a <see cref="GameMaster"/> object available that
+	/// provides the string file.
+	public static Translator Instance {
+		get {
+			if (instance == null) {
+				instance = new Translator (GameMaster.Instance.stringFile);
+			}
+
+			return instance;
+		}
+	}
+
+
+	public Translator (TextAsset ta) {
+		if (instance != null) {
+			return;
+		}
+
+		stringFile = ta;
+		instance = this;
+		Awake();
+	}
+
+	#endregion
+
+
+	private TextAsset stringFile;
 
 	private string baselanguage;
 	private XmlDocument root;
@@ -74,6 +104,13 @@ public class Translator : MonoBehaviour
 	/// Sets up various variables.
 	/// </summary>
 	void Awake () {
+
+		//Check if we have a text asset available, otherwise die.
+		if (stringFile == null) {
+			throw new ArgumentNullException ();
+		}
+
+
 		// Get the file into the document.
 		root = new XmlDocument ();
 		root.LoadXml (stringFile.text);
@@ -124,7 +161,7 @@ public class Translator : MonoBehaviour
 				return result;
 			
 		} catch (NullReferenceException ex) {
-			print ("[" + this.GetType ().ToString () + "] " + ex.ToString ());
+			Debug.Log ("[" + this.GetType ().ToString () + "] " + ex.ToString ());
 			result[0] = null;
 			return result;
 		}
