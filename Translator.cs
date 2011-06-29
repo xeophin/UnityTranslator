@@ -200,7 +200,37 @@ public class Translator {
 		return GetText(id, language);
 	}
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="element">
+    /// A <see cref="XPathNavigator"/>
+    /// </param>
+    /// <param name="lang">
+    /// A <see cref="System.String"/>
+    /// </param>
+    /// <returns>
+    /// A <see cref="System.String[]"/>
+    /// </returns>
+    public string[] GetText (XPathNavigator element, string lang)
+    {
+        string[] result = new string[2];
 
+        string text = element.SelectSingleNode ("text[@lang='" + lang + "']").Value;
+        if (text != null) {
+            result[0] = text;
+        } else {
+            text = element.SelectSingleNode ("text[@lang='" + baselanguage + "']").Value;
+
+            if (text != null) {
+                result[0] = text + " (missing)";
+            } else {
+                result[0] = element.GetAttribute ("id", "") + " (string missing)";
+            }
+        }
+
+        return result;
+    }
 
 	/// <summary>
 	/// This method takes a <see cref="XmlNode"/> and tries to extract the
@@ -225,6 +255,7 @@ public class Translator {
 	/// <returns>
 	/// A <see cref="System.String[]"/>.
 	/// </returns>
+ [Obsolete]
 	public string[] GetText (XmlNode element, string lang) {
 		string[] result = new string[2];
 
